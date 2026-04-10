@@ -56,6 +56,7 @@ const AUTH_CHECKS = [
 const NO_AUTH_PLATFORMS = [
   'hackernews', 'stackoverflow', 'arxiv', 'wikipedia',
   'npm', 'pypi', 'devto', 'weather', 'read',
+  'search', 'finance', 'huggingface', 'docker'
 ];
 
 export async function runDoctor() {
@@ -63,7 +64,7 @@ export async function runDoctor() {
     source: 'webcli',
     command: 'doctor',
     node_version: process.version,
-    total_platforms: 14,
+    total_platforms: 18,
     dependencies: [],
     auth: [],
     no_auth_platforms: NO_AUTH_PLATFORMS,

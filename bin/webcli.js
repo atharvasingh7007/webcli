@@ -32,6 +32,7 @@ import { readCommand }          from '../platforms/read.js';
 import { searchCommand }        from '../platforms/search.js';
 import { financeCommand }       from '../platforms/finance.js';
 import { huggingfaceCommand }   from '../platforms/huggingface.js';
+import { dockerCommand }        from '../platforms/docker.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
@@ -62,6 +63,7 @@ program.addCommand(readCommand());
 program.addCommand(searchCommand());
 program.addCommand(financeCommand());
 program.addCommand(huggingfaceCommand());
+program.addCommand(dockerCommand());
 
 // ── doctor ────────────────────────────────────────────────────────────────────
 program
@@ -89,7 +91,7 @@ program
     output({
       source: 'webcli',
       version: pkg.version,
-      total_platforms: 14,
+      total_platforms: 18,
       platforms: {
         // ── Social / Community ───────────────────────────────────────────────
         hackernews: {
@@ -155,6 +157,13 @@ program
         },
 
         // ── Developer Tools ──────────────────────────────────────────────────
+        docker: {
+          auth: 'none (public endpoints)',
+          commands: [
+            'image <name>       — Get structured metadata for a Docker image repo',
+            'tags <name>        — List available published tags for a Docker image',
+          ]
+        },
         huggingface: {
           auth: 'none (public endpoints)',
           commands: [
