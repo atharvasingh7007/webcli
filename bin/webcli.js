@@ -31,6 +31,7 @@ import { devtoCommand }         from '../platforms/devto.js';
 import { readCommand }          from '../platforms/read.js';
 import { searchCommand }        from '../platforms/search.js';
 import { financeCommand }       from '../platforms/finance.js';
+import { huggingfaceCommand }   from '../platforms/huggingface.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
@@ -60,6 +61,7 @@ program.addCommand(devtoCommand());
 program.addCommand(readCommand());
 program.addCommand(searchCommand());
 program.addCommand(financeCommand());
+program.addCommand(huggingfaceCommand());
 
 // ── doctor ────────────────────────────────────────────────────────────────────
 program
@@ -153,6 +155,13 @@ program
         },
 
         // ── Developer Tools ──────────────────────────────────────────────────
+        huggingface: {
+          auth: 'none (public endpoints)',
+          commands: [
+            'model <repo-id>    — Get HuggingFace model metadata',
+            'dataset <repo-id>  — Get HuggingFace dataset metadata',
+          ]
+        },
         github: {
           auth: 'required (gh CLI + token)',
           commands: [
