@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.2.1 (Patch)
+- Implemented real `node-fetch` REST mappings for Brave Search API natively respecting token validation boundaries.
+- Implemented real `node-fetch` POST mappings for Tavily Search API cleanly parsing content blocks natively.
+- Dynamically calculated `total_platforms` inside `doctor.js` preventing hard-coded length mismatch errors for AI pipelines.
+
 ## Phase 1
 - Provider abstraction
 - Concurrency control
