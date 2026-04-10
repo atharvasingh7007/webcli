@@ -1,0 +1,29 @@
+// auth.json.example
+// This shows the shape of credentials webcli stores.
+// Actual credentials are stored by `conf` in your OS config directory:
+//   Windows: %APPDATA%\webcli\config.json
+//   macOS:   ~/Library/Preferences/webcli/config.json
+//   Linux:   ~/.config/webcli/config.json
+//
+// Never commit real credentials. This is just for reference.
+
+{
+  "github": {
+    "token": "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "reddit": {
+    "client_id": "your_reddit_app_client_id",
+    "client_secret": "your_reddit_app_client_secret",
+    "username": "your_reddit_username",
+    "password": "your_reddit_password"
+  },
+  "twitter": {
+    "cookie_json": "[{\"name\":\"auth_token\",\"value\":\"...\",\"domain\":\".twitter.com\"}]"
+  },
+  "youtube": {
+    "cookie_json": "[{\"name\":\"SID\",\"value\":\"...\",\"domain\":\".youtube.com\"}]"
+  },
+  "linkedin": {
+    "cookie_json": "[{\"name\":\"li_at\",\"value\":\"...\",\"domain\":\".linkedin.com\"}]"
+  }
+}

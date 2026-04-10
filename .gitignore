@@ -1,0 +1,28 @@
+node_modules/
+.env
+.env.local
+
+# Auth config is stored by `conf` in OS config dir, not here
+auth.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp transcript/cookie files
+*.vtt
+*.srt
+webcli_*_cookies_*.json
+webcli_*_cookies_*.txt
+webcli_transcript_*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
