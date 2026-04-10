@@ -1,6 +1,6 @@
 {
   "name": "browseless",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Unified web CLI for AI agents — 14 platforms, structured JSON output, zero browser needed",
   "main": "bin/webcli.js",
   "bin": {

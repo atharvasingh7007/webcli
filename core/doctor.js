@@ -64,7 +64,7 @@ export async function runDoctor() {
     source: 'webcli',
     command: 'doctor',
     node_version: process.version,
-    total_platforms: 18,
+    total_platforms: NO_AUTH_PLATFORMS.length + AUTH_CHECKS.length,
     dependencies: [],
     auth: [],
     no_auth_platforms: NO_AUTH_PLATFORMS,
