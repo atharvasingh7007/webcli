@@ -20,12 +20,11 @@ export function dockerCommand() {
           const data = await provider.getImage(images[0]);
           output(envelope('docker', 'image', data, { ok: true }));
         } catch (err) {
-          output(envelope('docker', 'image', null, {
-            ok: false,
+          output(envelope('docker', 'image', {
             type: 'image',
             image: images[0],
             error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
-          }));
+          }, { ok: false }));
         }
         return;
       }
@@ -56,12 +55,11 @@ export function dockerCommand() {
           const data = await provider.getTags(images[0], opts);
           output(envelope('docker', 'tags', data, { ok: true }));
         } catch (err) {
-          output(envelope('docker', 'tags', null, {
-            ok: false,
+          output(envelope('docker', 'tags', {
             type: 'tags',
             image: images[0],
             error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
-          }));
+          }, { ok: false }));
         }
         return;
       }

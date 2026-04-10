@@ -36,12 +36,11 @@ export function financeCommand() {
             const data = await provider.quote(symbols[0], opts);
             output(envelope('finance', 'quote', data, { ok: true }));
           } catch (err) {
-            output(envelope('finance', 'quote', null, {
-              ok: false,
+            output(envelope('finance', 'quote', {
               type: 'quote',
               symbol: symbols[0].toUpperCase(),
               error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
-            }));
+            }, { ok: false }));
           }
           return;
         }

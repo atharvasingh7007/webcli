@@ -42,8 +42,7 @@ program
   .description('Unified web CLI for AI agents — read the web from your shell')
   .version(pkg.version)
   .option('--json', 'Force JSON output (default for all commands)')
-  .option('--silent', 'Suppress stderr logs')
-  .option('--limit <n>', 'Override result limit', parseInt);
+  .option('--silent', 'Suppress stderr logs');
 
 // ── Platform subcommands ──────────────────────────────────────────────────────
 program.addCommand(githubCommand());

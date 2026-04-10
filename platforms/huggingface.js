@@ -21,12 +21,11 @@ export function huggingfaceCommand() {
           const data = await provider.getModel(repoIds[0]);
           output(envelope('huggingface', 'model', data, { ok: true }));
         } catch (err) {
-          output(envelope('huggingface', 'model', null, {
-            ok: false,
+          output(envelope('huggingface', 'model', {
             type: 'model',
             id: repoIds[0],
             error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
-          }));
+          }, { ok: false }));
         }
         return;
       }
@@ -56,12 +55,11 @@ export function huggingfaceCommand() {
           const data = await provider.getDataset(repoIds[0]);
           output(envelope('huggingface', 'dataset', data, { ok: true }));
         } catch (err) {
-          output(envelope('huggingface', 'dataset', null, {
-            ok: false,
+          output(envelope('huggingface', 'dataset', {
             type: 'dataset',
             id: repoIds[0],
             error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
-          }));
+          }, { ok: false }));
         }
         return;
       }
