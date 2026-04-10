@@ -1,10 +1,10 @@
 {
-  "name": "webcli",
+  "name": "browseless",
   "version": "1.1.0",
   "description": "Unified web CLI for AI agents — 14 platforms, structured JSON output, zero browser needed",
   "main": "bin/webcli.js",
   "bin": {
-    "webcli": "./bin/webcli.js"
+    "webcli": "bin/webcli.js"
   },
   "scripts": {
     "test": "node test/run.js",
@@ -12,10 +12,28 @@
     "doctor": "node bin/webcli.js doctor"
   },
   "keywords": [
-    "cli", "ai-agent", "mcp", "github", "reddit", "twitter", "youtube",
-    "hackernews", "linkedin", "arxiv", "npm", "pypi", "stackoverflow",
-    "wikipedia", "weather", "openclaw", "claude-code", "agent-reach",
-    "hn", "web-scraping", "agent-tools"
+    "cli",
+    "ai-agent",
+    "mcp",
+    "github",
+    "reddit",
+    "twitter",
+    "youtube",
+    "hackernews",
+    "linkedin",
+    "arxiv",
+    "npm",
+    "pypi",
+    "stackoverflow",
+    "wikipedia",
+    "weather",
+    "openclaw",
+    "claude-code",
+    "agent-reach",
+    "hn",
+    "web-scraping",
+    "agent-tools",
+    "browseless"
   ],
   "author": "Atharva Singh <atharvasingh7007>",
   "license": "MIT",
