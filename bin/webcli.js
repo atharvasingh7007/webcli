@@ -30,6 +30,7 @@ import { weatherCommand }       from '../platforms/weather.js';
 import { devtoCommand }         from '../platforms/devto.js';
 import { readCommand }          from '../platforms/read.js';
 import { searchCommand }        from '../platforms/search.js';
+import { financeCommand }       from '../platforms/finance.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
@@ -58,6 +59,7 @@ program.addCommand(weatherCommand());
 program.addCommand(devtoCommand());
 program.addCommand(readCommand());
 program.addCommand(searchCommand());
+program.addCommand(financeCommand());
 
 // ── doctor ────────────────────────────────────────────────────────────────────
 program
@@ -139,6 +141,14 @@ program
             'article <id|slug>',
             'user <username> [--limit n]',
             'tags [--limit n]',
+          ],
+        },
+
+        // ── Finance / Markets ────────────────────────────────────────────────
+        finance: {
+          auth: 'none',
+          commands: [
+            'quote <symbol> [--asset-type equity|crypto] — Get structured quotes and market data',
           ],
         },
 
