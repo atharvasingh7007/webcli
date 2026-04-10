@@ -5,7 +5,7 @@
 
 webcli is a unified shell CLI giving AI agents structured JSON access to 14 web platforms — no browser, no scraping, no API keys for most.
 
-**Install:** `npm install -g webcli`
+**Install:** `npm install -g browseless`
 **All commands:** `webcli list` (returns full JSON map)
 **Health check:** `webcli doctor`
 

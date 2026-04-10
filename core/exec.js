@@ -142,22 +142,35 @@ export async function runJSON(bin, args, opts = {}) {
  */
 export async function fetchText(url, opts = {}) {
   const { default: fetch } = await import('node-fetch');
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'webcli/1.0.0 (AI agent web CLI; github.com/atharvasingh7007/webcli)',
-      ...opts.headers,
-    },
-    ...opts,
-  });
+  
+  let retries = 3;
+  let delay = 1000;
 
-  if (!res.ok) {
-    const err = new Error(`HTTP ${res.status} from ${url}`);
-    err.code = 'HTTP_ERROR';
-    err.status = res.status;
-    throw err;
+  while (retries >= 0) {
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'webcli/1.0.0 (AI agent web CLI; github.com/atharvasingh7007/webcli)',
+        ...opts.headers,
+      },
+      ...opts,
+    });
+
+    if ((res.status === 429 || res.status >= 500) && retries > 0) {
+      await new Promise(r => setTimeout(r, delay + Math.random() * delay));
+      delay *= 2;
+      retries--;
+      continue;
+    }
+
+    if (!res.ok) {
+      const err = new Error(`HTTP ${res.status} from ${url}`);
+      err.code = 'HTTP_ERROR';
+      err.status = res.status;
+      throw err;
+    }
+
+    return res.text();
   }
-
-  return res.text();
 }
 
 /**

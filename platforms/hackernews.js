@@ -22,6 +22,21 @@ async function fetchItems(ids, limit) {
   return Promise.all(slice.map(id => fetchItem(id)));
 }
 
+function stripHtml(html) {
+  if (!html) return '';
+  return html
+    .replace(/<p>/gi, '\n\n')
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#x27;/g, "'")
+    .replace(/&#x2F;/g, "/")
+    .trim();
+}
+
 function formatItem(item) {
   if (!item) return null;
   return {
@@ -29,7 +44,7 @@ function formatItem(item) {
     type: item.type,
     title: item.title || null,
     url: item.url || null,
-    text: item.text ? item.text.replace(/<[^>]+>/g, '').slice(0, 500) : null,
+    text: item.text ? stripHtml(item.text).slice(0, 500) : null,
     score: item.score || 0,
     by: item.by || null,
     descendants: item.descendants || 0,
@@ -148,7 +163,7 @@ export function hackernewsCommand() {
           .map(c => ({
             id: c.id,
             by: c.by,
-            text: c.text ? c.text.replace(/<[^>]+>/g, '').slice(0, 800) : null,
+            text: c.text ? stripHtml(c.text).slice(0, 800) : null,
             time: c.time ? new Date(c.time * 1000).toISOString() : null,
           }));
       }
@@ -173,7 +188,7 @@ export function hackernewsCommand() {
         username: user.id,
         karma: user.karma,
         created: new Date(user.created * 1000).toISOString(),
-        about: user.about ? user.about.replace(/<[^>]+>/g, '') : null,
+        about: user.about ? stripHtml(user.about) : null,
         recent_submissions: recent.map(formatItem).filter(Boolean),
       }));
     }));

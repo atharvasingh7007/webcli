@@ -7,9 +7,9 @@
 ## Install
 
 ```bash
-npm install -g webcli
+npm install -g browseless
 # or run directly
-npx webcli hackernews top
+npx -p browseless webcli hackernews top
 ```
 
 ## Quick Start
