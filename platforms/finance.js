@@ -12,10 +12,10 @@ export function financeCommand() {
   const cmd = new Command('finance').alias('fin').description('Financial and Capital Market Data');
 
   cmd
-    .command('quote <symbol>')
+    .command('quote <symbols...>')
     .description('Get structured price quotes for equities or crypto')
     .option('-t, --asset-type <type>', 'Force routing logic (equity | crypto)')
-    .action(async (symbol, opts) => {
+    .action(async (symbols, opts) => {
       try {
         let provider;
         const typeStr = opts.assetType?.toLowerCase();
@@ -31,20 +31,51 @@ export function financeCommand() {
           throw err;
         }
 
-        const data = await provider.quote(symbol, opts);
-        
-        output(envelope('finance', 'quote', data, { ok: true }));
+        if (symbols.length === 1) {
+          try {
+            const data = await provider.quote(symbols[0], opts);
+            output(envelope('finance', 'quote', data, { ok: true }));
+          } catch (err) {
+            output(envelope('finance', 'quote', null, {
+              ok: false,
+              type: 'quote',
+              symbol: symbols[0].toUpperCase(),
+              error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
+            }));
+          }
+          return;
+        }
+
+        // Batch routing
+        const { default: pLimit } = await import('p-limit');
+        const limit = pLimit(5);
+        const results = new Array(symbols.length);
+
+        await Promise.all(symbols.map((sym, i) => limit(async () => {
+          try {
+             const data = await provider.quote(sym, opts);
+             results[i] = { ok: true, ...data };
+          } catch (err) {
+             results[i] = {
+               symbol: sym.toUpperCase(),
+               ok: false,
+               error: { code: err.code || 'UNKNOWN_ERROR', message: err.message }
+             };
+          }
+        })));
+
+        output(envelope('finance', 'quote_batch', results, { 
+          ok: true,
+          asset_type: typeStr === 'stock' ? 'equity' : (typeStr === 'coin' ? 'crypto' : typeStr)
+        }));
       } catch (err) {
-        const failureData = {
+        output(envelope('finance', 'quote', null, {
           ok: false,
-          type: 'quote',
-          symbol: symbol.toUpperCase(),
           error: {
             code: err.code || 'UNKNOWN_ERROR',
             message: err.message
           }
-        };
-        output(envelope('finance', 'quote', null, failureData));
+        }));
       }
     });
 
