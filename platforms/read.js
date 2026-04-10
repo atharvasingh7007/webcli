@@ -18,13 +18,14 @@ export function readCommand() {
     .description('Fetch any webpage as clean markdown text (no auth needed)')
     .option('--raw', 'Return raw HTML instead of clean text')
     .option('--no-jina', 'Skip Jina reader, use direct fetch')
+    .option('--no-cache', 'Bypass the local 60s cache forcibly')
     .option('--stream', 'Stream NDJSON output as lines instead of final JSON (advanced)')
     .action(withErrorHandling('read', async (urls, opts) => {
       const provider = new JinaProvider();
       const limit = pLimit(5); // Parallel concurrency maximum
       
-      const results = [];
-      const fetchOne = async (url) => {
+      const results = new Array(urls.length);
+      const fetchOne = async (url, i) => {
         try {
           new URL(url); // validate structure
           const { content, method } = await provider.read(url, opts);
@@ -39,19 +40,27 @@ export function readCommand() {
           if (opts.stream) {
             process.stdout.write(JSON.stringify({ source: 'read', command: 'read', type: 'result', ...res }) + '\n');
           } else {
-            results.push(res);
+            results[i] = res;
           }
         } catch (err) {
-          const res = { url, ok: false, error: err.message };
+          const res = { 
+            url, 
+            ok: false, 
+            error: {
+              message: err.message,
+              code: err.code || 'UNKNOWN_ERROR',
+              status: err.status || null
+            }
+          };
           if (opts.stream) {
             process.stdout.write(JSON.stringify({ source: 'read', command: 'read', type: 'error', ...res }) + '\n');
           } else {
-            results.push(res);
+            results[i] = res;
           }
         }
       };
 
-      await Promise.all(urls.map(url => limit(() => fetchOne(url))));
+      await Promise.all(urls.map((url, i) => limit(() => fetchOne(url, i))));
 
       if (!opts.stream) {
         output(envelope('read', 'read', results));

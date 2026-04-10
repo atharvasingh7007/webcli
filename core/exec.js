@@ -5,6 +5,7 @@
 
 import { execa } from 'execa';
 import which from 'which';
+import { readCache, writeCache } from './cache.js';
 
 const DEFAULT_TIMEOUT = 30_000; // 30 seconds
 
@@ -141,6 +142,14 @@ export async function runJSON(bin, args, opts = {}) {
  * @returns {Promise<string>}
  */
 export async function fetchText(url, opts = {}) {
+  const useCache = opts.cache !== false;
+  const cacheKey = typeof opts.body === 'string' ? `${url}|${opts.body}` : url;
+  
+  if (useCache && (!opts.method || opts.method === 'GET')) {
+    const cached = readCache(cacheKey, 60);
+    if (cached) return cached.text;
+  }
+
   const { default: fetch } = await import('node-fetch');
   
   let retries = 3;
@@ -169,7 +178,13 @@ export async function fetchText(url, opts = {}) {
       throw err;
     }
 
-    return res.text();
+    const text = await res.text();
+    
+    if (useCache && (!opts.method || opts.method === 'GET')) {
+      writeCache(cacheKey, { text });
+    }
+    
+    return text;
   }
 }
 
