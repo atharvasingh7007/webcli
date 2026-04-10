@@ -6,7 +6,7 @@
 webcli is a unified shell CLI giving AI agents structured JSON access to 14 web platforms — no browser, no scraping, no API keys for most.
 
 **Install:** `npm install -g browseless`
-**All commands:** `webcli list` (returns full JSON map)
+**All commands:** `webcli help --json` (returns full JSON map)
 **Health check:** `webcli doctor`
 
 ---
@@ -110,6 +110,23 @@ webcli weather current <city>                     ← temperature, humidity, win
 webcli weather forecast <city> [--days 1-16]      ← daily forecast
 ```
 
+### finance — NO AUTH
+```
+webcli finance quote <symbol1> <symbol2>... [--asset-type equity|crypto]
+```
+
+### docker — NO AUTH
+```
+webcli docker image <image1> <image2>...          ← sizes, architectures, descriptors
+webcli docker tags <image> [--limit n]            ← available remote tags
+```
+
+### huggingface — NO AUTH
+```
+webcli hf model <model-id1> <model-id2>...        ← pipeline tag, downloads, partial readme
+webcli hf dataset <dataset-id1>...                ← dataset specifications
+```
+
 ### read — NO AUTH — MOST USEFUL FOR AGENTS
 ```
 webcli read <url>                                 ← fetch ANY webpage as clean markdown text
@@ -162,8 +179,8 @@ webcli linkedin company <name|url>
 4. `webcli arxiv search "<topic>" --category cs.AI` — research papers
 5. `webcli wikipedia summary "<topic>"` — factual grounding
 6. `webcli hackernews search "<topic>"` — community discussion
-7. `webcli npm info <package>` — package research
-8. `webcli reddit search "<topic>" --sort top` — community opinions
+7. `webcli finance quote AAPL MSFT --asset-type equity` — market logic and valuation
+8. `webcli hf model sentence-transformers/all-MiniLM-L6-v2` — AI architecture context
 9. `webcli weather current <city>` — live weather
 10. `webcli github get-readme <owner/repo>` — read any repo README
 
