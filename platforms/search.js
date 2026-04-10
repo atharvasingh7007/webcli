@@ -53,6 +53,8 @@ export function searchCommand() {
            mode = 'search+read';
            const topN = parseInt(opts.readTop);
            // Force hard truncation directly to N elements as specified by slice boundaries
+           results = results.slice(0, topN);
+
            const jina = new JinaProvider();
            const domainLimits = new Map();
       

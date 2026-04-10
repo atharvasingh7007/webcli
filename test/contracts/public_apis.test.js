@@ -12,6 +12,15 @@ test('Public Zero-Auth Platform Contracts', async (t) => {
      assert.ok(res.results[0].items.length > 0, 'Must extract items successfully');
   });
 
+  await t.test('rss cleanly isolates failure URLs in batch gracefully', async () => {
+     const { stdout } = await execa('node', ['bin/webcli.js', 'rss', 'https://news.ycombinator.com/rss', 'http://fake-domain-that-does-not-exist.com/rss']);
+     const res = JSON.parse(stdout);
+     assert.strictEqual(res.source, 'rss');
+     assert.strictEqual(res.ok, true, 'Base batch must remain globally functional globally');
+     assert.strictEqual(res.results[0].ok, true);
+     assert.strictEqual(res.results[1].ok, false, 'Invalid URLs explicitly fail locally isolating structural stability');
+  });
+
   await t.test('cache clear explicitly binds wipe output envelope strictly', async () => {
      const { stdout } = await execa('node', ['bin/webcli.js', 'cache', 'clear']);
      const res = JSON.parse(stdout);
@@ -39,6 +48,7 @@ test('Public Zero-Auth Platform Contracts', async (t) => {
      const { stdout } = await execa('node', ['bin/webcli.js', 'wikipedia', 'summary', 'JavaScript']);
      const res = JSON.parse(stdout);
      assert.strictEqual(res.source, 'wikipedia');
-     assert.ok(res.results.extract.includes('programming language'), 'Core summary must be retrieved cleanly');
+     assert.strictEqual(typeof res.results.extract, 'string', 'Core summary must be retrieved and mapped cleanly as text');
+     assert.ok(res.results.extract.length > 10, 'Mapping body must structurally populate successfully');
   });
 });

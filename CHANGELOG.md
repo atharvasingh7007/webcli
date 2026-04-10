@@ -1,5 +1,13 @@
 # Changelog
 
+## v1.3.0 (Minor)
+- Added Zero-Dependency XML RSS Fetching natively via Regex.
+- Added explicit mapping bounds for deep GitHub Pull request operations.
+- Resolved implicit propagation failures tracking `fetchText` natively dropping `RATE_LIMITED` HTTP bounds completely safely. 
+- Mapped explicit concurrent domain boundaries abstractly tracking `pLimit(1)` mapping per internal hostname tracking to `search` preventing domain 429 locks.
+- Refactored List and Doctor global operations terminating static hard-coded metrics bounds globally.
+- Implemented generalized native invariant boundaries across remaining standalone plugin endpoints.
+
 ## v1.2.1 (Patch)
 - Implemented real `node-fetch` REST mappings for Brave Search API natively respecting token validation boundaries.
 - Implemented real `node-fetch` POST mappings for Tavily Search API cleanly parsing content blocks natively.

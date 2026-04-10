@@ -252,7 +252,7 @@ This document serves as the ground truth for validating webcli outputs explicitl
     "source": "webcli",
     "command": "doctor",
     "node_version": "...",
-    "total_platforms": 18,
+    "total_platforms": 19,
     "overall": "ok",
     "dependencies": [],
     "auth": [],
@@ -262,3 +262,23 @@ This document serves as the ground truth for validating webcli outputs explicitl
 
 ### Semantic Rules
 - `total_platforms` equals the actual number of registered commands (tested as a positive integer, not a hardcoded strict value).
+
+## 7. webcli rss
+### URL Fetch Wrapper
+- **Success/Multi-URL Wrapper envelope shape:**
+  ```json
+  {
+     "source": "rss",
+     "command": "rss_batch",
+     "ok": true,
+     "count": 2,
+     "results": [ 
+        { "url": "...", "ok": true, "count": 10, "items": [ { "title": "...", "link": "...", "description": "...", "pubDate": "..." } ] },
+        { "url": "...", "ok": false, "error": "HTTP 404" }
+     ]
+  }
+  ```
+
+### Semantic Rules
+- `count` equals the number of RSS feeds requested.
+- Object properties `title`, `link`, `description`, `pubDate` are strictly mapped internally cleanly escaping undefined fields gracefully.

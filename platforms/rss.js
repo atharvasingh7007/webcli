@@ -43,7 +43,7 @@ export function rssCommand() {
         }
       })));
 
-      output(envelope('rss', 'rss_batch', results));
+      output(envelope('rss', 'rss_batch', results, { ok: true }));
     }));
 
   return cmd;

@@ -2,7 +2,7 @@
 
 webcli is a parse-safe, provider-agnostic CLI designed for autonomous agents.
 
-It gives AI agents structured JSON access to 18 web platforms — including documentation reading, web search, GitHub repos, finance quotes, HuggingFace models, and Docker registries — without requiring browsers, scrapers, or complex API keys.
+It gives AI agents structured JSON access to 19 web platforms — including documentation reading, web search, GitHub repos, finance quotes, HuggingFace models, and Docker registries — without requiring browsers, scrapers, or complex API keys.
 
 ## Agent Integration Guarantees
 
