@@ -29,6 +29,7 @@ import { stackoverflowCommand } from '../platforms/stackoverflow.js';
 import { weatherCommand }       from '../platforms/weather.js';
 import { devtoCommand }         from '../platforms/devto.js';
 import { readCommand }          from '../platforms/read.js';
+import { searchCommand }        from '../platforms/search.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(join(__dirname, '../package.json'), 'utf8'));
@@ -56,6 +57,7 @@ program.addCommand(stackoverflowCommand());
 program.addCommand(weatherCommand());
 program.addCommand(devtoCommand());
 program.addCommand(readCommand());
+program.addCommand(searchCommand());
 
 // ── doctor ────────────────────────────────────────────────────────────────────
 program
@@ -201,7 +203,13 @@ program
           ],
         },
 
-        // ── Web / Content ────────────────────────────────────────────────────
+        // ── Web / Content / Search ───────────────────────────────────────────
+        search: {
+          auth: 'none (ddg) | optional API Key (brave|tavily)',
+          commands: [
+            'search <query> [--engine ddg|brave|tavily] [--limit n] [--delay ms]',
+          ]
+        },
         read: {
           auth: 'none',
           commands: [
