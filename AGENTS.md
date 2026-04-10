@@ -143,6 +143,9 @@ webcli github get-readme <owner/repo>             ← full README text
 webcli github get-file <owner/repo> <path> [--ref branch]
 webcli github list-repos [--user username] [--limit n]
 webcli github trending [--language lang] [--since daily|weekly|monthly]
+webcli github pr list --repo <owner/repo> [--state open|closed|merged|all]
+webcli github pr diff <number> --repo <owner/repo>
+webcli github pr view <number> --repo <owner/repo> [--comments]
 ```
 
 ### youtube — NEEDS: yt-dlp installed
@@ -167,6 +170,11 @@ webcli twitter thread <url>
 webcli linkedin search-jobs <query> [--location city] [--remote] [--limit n]
 webcli linkedin search-people <query> [--company name] [--limit n]
 webcli linkedin company <name|url>
+```
+
+### rss — NO AUTH
+```
+webcli rss <url>                                  ← fetch standard XML feeds cleanly mapped
 ```
 
 ---

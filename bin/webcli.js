@@ -103,13 +103,9 @@ program
   .command('list')
   .description('List all available commands (machine-readable for agents)')
   .action(() => {
-    output({
-      source: 'webcli',
-      version: pkg.version,
-      total_platforms: 19,
-      platforms: {
-        hackernews: {
-          auth: 'none',
+    const listMap = {
+      hackernews: {
+        auth: 'none',
           commands: [
             'top [--limit n]',
             'new [--limit n]',
@@ -276,7 +272,13 @@ program
             'rss <url> -- Fetch standard XML feeds cleanly mapped',
           ]
         }
-      },
+    };
+
+    output({
+      source: 'webcli',
+      version: pkg.version,
+      total_platforms: Object.keys(listMap).length,
+      platforms: listMap
     });
   });
 

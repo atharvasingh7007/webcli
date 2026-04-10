@@ -156,15 +156,34 @@ export async function fetchText(url, opts = {}) {
   let delay = 1000;
 
   while (retries >= 0) {
-    const res = await fetch(url, {
-      headers: {
-        'User-Agent': 'webcli/1.0.0 (AI agent web CLI; github.com/atharvasingh7007/webcli)',
-        ...opts.headers,
-      },
-      ...opts,
-    });
+    let res;
+    try {
+      res = await fetch(url, {
+        headers: {
+          'User-Agent': 'webcli/1.0.0 (AI agent web CLI; github.com/atharvasingh7007/webcli)',
+          ...opts.headers,
+        },
+        ...opts,
+      });
+    } catch (networkErr) {
+      if (retries === 0) {
+         const err = new Error(`Network failure fetching ${url}: ${networkErr.message}`);
+         err.code = 'NETWORK_ERROR';
+         throw err;
+      }
+      await new Promise(r => setTimeout(r, delay + Math.random() * delay));
+      delay *= 2;
+      retries--;
+      continue;
+    }
 
-    if ((res.status === 429 || res.status >= 500) && retries > 0) {
+    if (res.status === 429 || res.status >= 500) {
+      if (retries === 0) {
+         const err = new Error(res.status === 429 ? `Rate limited fetching ${url}` : `HTTP ${res.status} from ${url}`);
+         err.code = res.status === 429 ? 'RATE_LIMITED' : 'HTTP_ERROR';
+         err.status = res.status;
+         throw err;
+      }
       await new Promise(r => setTimeout(r, delay + Math.random() * delay));
       delay *= 2;
       retries--;

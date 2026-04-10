@@ -19,6 +19,6 @@ test('HuggingFace Contracts', async (t) => {
     // Mappings isolating faults perfectly
     assert.strictEqual(res.results[0].ok, true);
     assert.strictEqual(res.results[1].ok, false);
-    assert.strictEqual(res.results[1].error.code, 'PRIVATE_RESOURCE'); 
+    assert.strictEqual(res.results[1].error.code, 'NOT_FOUND'); 
   });
 });

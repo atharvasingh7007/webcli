@@ -53,12 +53,22 @@ export function searchCommand() {
            mode = 'search+read';
            const topN = parseInt(opts.readTop);
            // Force hard truncation directly to N elements as specified by slice boundaries
-           results = results.slice(0, topN);
-
-           const limit = pLimit(5);
            const jina = new JinaProvider();
+           const domainLimits = new Map();
+      
+           const getLimit = (urlString) => {
+             try {
+               const host = new URL(urlString).hostname;
+               if (!domainLimits.has(host)) {
+                 domainLimits.set(host, pLimit(1));
+               }
+               return domainLimits.get(host);
+             } catch {
+               return pLimit(1);
+             }
+           };
 
-           const readTasks = results.map((result) => limit(async () => {
+           const readTasks = results.map((result) => getLimit(result.url)(async () => {
              let readPayload;
              try {
                const { content } = await jina.read(result.url, { cache: true }); // Default caching ok
