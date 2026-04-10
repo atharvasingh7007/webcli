@@ -75,12 +75,12 @@ function formatJob(job) {
 // ── Command builder ───────────────────────────────────────────────────────────
 
 export function linkedinCommand() {
-  const cmd = new Command('linkedin').alias('li').description('LinkedIn commands (requires auth)');
+  const cmd = new Command('linkedin').alias('li').description('[EXPERIMENTAL] LinkedIn commands (fragile cookie auth)');
 
   // search-jobs
   cmd
     .command('search-jobs <query>')
-    .description('Search LinkedIn job postings')
+    .description('[EXPERIMENTAL] Search LinkedIn job postings')
     .option('-l, --limit <n>', 'Number of results', '10')
     .option('--location <city>', 'Filter by location')
     .option('--remote', 'Remote jobs only')
@@ -111,13 +111,13 @@ export function linkedinCommand() {
         .slice(0, parseInt(opts.limit))
         .map(formatJob);
 
-      output(envelope('linkedin', 'search-jobs', results, { query }));
+      output(envelope('linkedin', 'search-jobs', results, { query, experimental: true }));
     }));
 
   // search-people
   cmd
     .command('search-people <query>')
-    .description('Search LinkedIn people')
+    .description('[EXPERIMENTAL] Search LinkedIn people')
     .option('-l, --limit <n>', 'Number of results', '10')
     .option('--company <name>', 'Filter by company')
     .action(withErrorHandling('linkedin', async (query, opts) => {
@@ -147,13 +147,13 @@ export function linkedinCommand() {
           profile_url: e?.publicIdentifier ? `https://www.linkedin.com/in/${e.publicIdentifier}` : null,
         }));
 
-      output(envelope('linkedin', 'search-people', results, { query }));
+      output(envelope('linkedin', 'search-people', results, { query, experimental: true }));
     }));
 
   // company
   cmd
     .command('company <identifier>')
-    .description('Get LinkedIn company info (name, URL, or vanity identifier)')
+    .description('[EXPERIMENTAL] Get LinkedIn company info')
     .action(withErrorHandling('linkedin', async (identifier) => {
       // Extract identifier from URL if passed
       const vanity = identifier.replace(/.*linkedin\.com\/company\//, '').replace(/\/$/, '');
@@ -172,7 +172,7 @@ export function linkedinCommand() {
         website: company?.companyPageUrl,
         followers: company?.followingInfo?.followerCount,
         url: `https://www.linkedin.com/company/${vanity}`,
-      }));
+      }, { experimental: true }));
     }));
 
   return cmd;

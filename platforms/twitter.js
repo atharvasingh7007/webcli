@@ -75,12 +75,12 @@ function fmt(t) {
 // ── Command builder ───────────────────────────────────────────────────────────
 
 export function twitterCommand() {
-  const cmd = new Command('twitter').alias('tw').description('Twitter/X commands');
+  const cmd = new Command('twitter').alias('tw').description('[EXPERIMENTAL] Twitter/X commands (fragile cookie auth)');
 
   // search — works without auth for public tweets
   cmd
     .command('search <query>')
-    .description('Search Twitter/X posts (auth optional for better results)')
+    .description('[EXPERIMENTAL] Search Twitter/X posts (auth optional)')
     .option('-l, --limit <n>', 'Number of results', '20')
     .option('--lang <code>', 'Filter by language (e.g. en)')
     .option('--from <handle>', 'Only tweets from this user')
@@ -96,7 +96,7 @@ export function twitterCommand() {
         const args = ['search', q, '--max', opts.limit];
         const data = await tw(args, cookieFile);
         const tweets = Array.isArray(data) ? data : data.tweets || data.results || [];
-        output(envelope('twitter', 'search', tweets.map(fmt).filter(Boolean), { query: q }));
+        output(envelope('twitter', 'search', tweets.map(fmt).filter(Boolean), { query: q, experimental: true }));
       } finally {
         cleanupFile(cookieFile);
       }
@@ -116,7 +116,7 @@ export function twitterCommand() {
         if (opts.type === 'following') args.push('-t', 'following');
         const data = await tw(args, cookieFile);
         const tweets = Array.isArray(data) ? data : data.tweets || [];
-        output(envelope('twitter', 'timeline', tweets.map(fmt).filter(Boolean), { type: opts.type }));
+        output(envelope('twitter', 'timeline', tweets.map(fmt).filter(Boolean), { type: opts.type, experimental: true }));
       } finally {
         cleanupFile(cookieFile);
       }
@@ -137,7 +137,7 @@ export function twitterCommand() {
           handle: cleanHandle,
           profile: data.profile || data.user || {},
           recent_tweets: (data.tweets || []).map(fmt).filter(Boolean),
-        }));
+        }, { experimental: true }));
       } finally {
         cleanupFile(cookieFile);
       }
@@ -155,7 +155,7 @@ export function twitterCommand() {
         const args = ['bookmarks', '--max', opts.limit];
         const data = await tw(args, cookieFile);
         const tweets = Array.isArray(data) ? data : data.tweets || data.bookmarks || [];
-        output(envelope('twitter', 'bookmarks', tweets.map(fmt).filter(Boolean)));
+        output(envelope('twitter', 'bookmarks', tweets.map(fmt).filter(Boolean), { experimental: true }));
       } finally {
         cleanupFile(cookieFile);
       }
