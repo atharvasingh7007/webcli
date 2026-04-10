@@ -56,7 +56,7 @@ const AUTH_CHECKS = [
 const NO_AUTH_PLATFORMS = [
   'hackernews', 'stackoverflow', 'arxiv', 'wikipedia',
   'npm', 'pypi', 'devto', 'weather', 'read',
-  'search', 'finance', 'huggingface', 'docker'
+  'search', 'finance', 'huggingface', 'docker', 'rss'
 ];
 
 export async function runDoctor() {
