@@ -20,6 +20,7 @@ export function searchCommand() {
     .option('-l, --limit <n>', 'Number of results to return', '10')
     .option('--delay <ms>', 'Throttling delay for DDG (default 1500, set 0 to disable)')
     .option('--read-top <n>', 'Read the content of the top N results natively (composition layer)')
+    .option('--stream', 'Stream output as NDJSON immediately avoiding batch boundary blocks')
     .action(async (query, opts) => {
       let provider;
 
@@ -41,6 +42,11 @@ export function searchCommand() {
         let { engine, query: q, results } = await provider.search(query, opts);
         
         let mode = 'search';
+        
+        // Immediate baseline stream delivery 
+        if (opts.stream) {
+           process.stdout.write(JSON.stringify(envelope('search', 'search', results, { ok: true, engine, query: q })) + '\n');
+        }
 
         // Apply composition reading
         if (opts.readTop) {
@@ -53,9 +59,10 @@ export function searchCommand() {
            const jina = new JinaProvider();
 
            const readTasks = results.map((result) => limit(async () => {
+             let readPayload;
              try {
                const { content } = await jina.read(result.url, { cache: true }); // Default caching ok
-               result.read = {
+               readPayload = {
                  ok: true,
                  url: result.url,
                  content: content.slice(0, 100000), // 100k cap matching read logic safely
@@ -64,7 +71,7 @@ export function searchCommand() {
                  error: null
                };
              } catch (readErr) {
-               result.read = {
+               readPayload = {
                  ok: false,
                  url: result.url,
                  provider: 'jina',
@@ -74,18 +81,26 @@ export function searchCommand() {
                  }
                };
              }
+             
+             if (opts.stream) {
+                process.stdout.write(JSON.stringify(envelope('search', 'read_result', [readPayload], { url: result.url, ok: readPayload.ok })) + '\n');
+             } else {
+                result.read = readPayload;
+             }
            }));
            
            await Promise.all(readTasks);
         }
 
         // Single JSON Payload blob output per stability rules
-        output(envelope('search', 'search', results, { 
-          ok: true, 
-          mode,
-          engine, 
-          query: q 
-        }));
+        if (!opts.stream) {
+          output(envelope('search', 'search', results, { 
+            ok: true, 
+            mode,
+            engine, 
+            query: q 
+          }));
+        }
 
       } catch (err) {
         // Enforce structured missing-key boundaries / HTTP failures visually to agent pipelines natively

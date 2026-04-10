@@ -22,7 +22,20 @@ export function readCommand() {
     .option('--stream', 'Stream NDJSON output as lines instead of final JSON (advanced)')
     .action(withErrorHandling('read', async (urls, opts) => {
       const provider = new JinaProvider();
-      const limit = pLimit(5); // Parallel concurrency maximum
+      const domainLimits = new Map();
+      
+      const getLimit = (urlString) => {
+        try {
+          const host = new URL(urlString).hostname;
+          if (!domainLimits.has(host)) {
+            // Sequentially bound distinct hosts mapping 1 active connection per socket
+            domainLimits.set(host, pLimit(1));
+          }
+          return domainLimits.get(host);
+        } catch {
+          return pLimit(1); // Safest fallback on garbled queries
+        }
+      };
       
       const results = new Array(urls.length);
       const fetchOne = async (url, i) => {
@@ -60,7 +73,7 @@ export function readCommand() {
         }
       };
 
-      await Promise.all(urls.map((url, i) => limit(() => fetchOne(url, i))));
+      await Promise.all(urls.map((url, i) => getLimit(url)(() => fetchOne(url, i))));
 
       if (!opts.stream) {
         output(envelope('read', 'read', results));

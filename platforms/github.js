@@ -222,5 +222,90 @@ export function githubCommand() {
       })), { repo }));
     }));
 
+  // ── PR Commands ─────────────────────────────────────────────────────────────
+  const prCmd = new Command('pr').description('Pull request operations');
+
+  prCmd
+    .command('list')
+    .description('List pull requests for a repository')
+    .requiredOption('--repo <owner/repo>', 'Repository to list PRs for')
+    .option('--state <state>', 'Filter by state: open | closed | merged | all', 'open')
+    .option('-l, --limit <n>', 'Number of results', '20')
+    .action(withErrorHandling('github', async (opts) => {
+      const args = [
+        'pr', 'list',
+        '--repo', opts.repo,
+        '--state', opts.state,
+        '--limit', opts.limit,
+        '--json', 'number,title,state,url,author,createdAt,updatedAt,isDraft',
+      ];
+      const results = await ghJSON(args);
+      output(envelope('github', 'pr-list', results.map(r => ({
+        number: r.number,
+        title: r.title,
+        state: r.state,
+        is_draft: r.isDraft,
+        url: r.url,
+        author: r.author?.login,
+        created_at: r.createdAt,
+        updated_at: r.updatedAt
+      })), { repo: opts.repo }));
+    }));
+
+  prCmd
+    .command('diff <number>')
+    .description('View the diff of a pull request')
+    .requiredOption('--repo <owner/repo>', 'Repository containing the PR')
+    .action(withErrorHandling('github', async (number, opts) => {
+      const args = [
+        'pr', 'diff', number,
+        '--repo', opts.repo
+      ];
+      // gh pr diff outputs plain text diff, not JSON, so we use wrapper to return it natively
+      const diffContent = await ghRaw(args);
+      output(envelope('github', 'pr-diff', {
+        number,
+        repo: opts.repo,
+        diff: diffContent
+      }));
+    }));
+
+  prCmd
+    .command('view <number>')
+    .description('View PR details and comments')
+    .requiredOption('--repo <owner/repo>', 'Repository containing the PR')
+    .option('--comments', 'Include comments thread')
+    .action(withErrorHandling('github', async (number, opts) => {
+      const args = [
+        'pr', 'view', number,
+        '--repo', opts.repo,
+        '--json', 'number,title,state,body,url,author,createdAt,comments'
+      ];
+      if (opts.comments) args.push('--comments');
+      const data = await ghJSON(args);
+      
+      const payload = {
+        number: data.number,
+        title: data.title,
+        state: data.state,
+        body: data.body,
+        url: data.url,
+        author: data.author?.login,
+        created_at: data.createdAt,
+      };
+      
+      if (opts.comments && data.comments) {
+        payload.comments = data.comments.map(c => ({
+           author: c.author?.login,
+           body: c.body,
+           created_at: c.createdAt
+        }));
+      }
+
+      output(envelope('github', 'pr-view', payload, { repo: opts.repo }));
+    }));
+
+  cmd.addCommand(prCmd);
+
   return cmd;
 }

@@ -46,3 +46,15 @@ export function writeCache(key, data) {
     // Mute write errors; lack of caching should not break the pipeline
   }
 }
+
+export function clearCache() {
+  try {
+    if (fs.existsSync(CACHE_DIR)) {
+      fs.rmSync(CACHE_DIR, { recursive: true, force: true });
+      return true;
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}

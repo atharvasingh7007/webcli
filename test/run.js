@@ -7,6 +7,7 @@
 import { execa } from 'execa';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import fs from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CLI = join(__dirname, '../bin/webcli.js');
@@ -120,6 +121,63 @@ await test('webcli doctor runs and returns status JSON', async () => {
   assertShape(data, ['source', 'command', 'dependencies', 'auth']);
   if (!Array.isArray(data.dependencies)) throw new Error('dependencies not array');
 });
+
+// Additional no-auth platforms (Smoke tests)
+console.log('\nSmoke testing remaining no-auth platforms:');
+
+await test('wikipedia search returns results', async () => {
+  const data = await run(['wikipedia', 'search', 'javascript', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('arxiv search returns results', async () => {
+  const data = await run(['arxiv', 'search', 'llm', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('npm search returns results', async () => {
+  const data = await run(['npm', 'search', 'express', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('pypi search returns results', async () => {
+  const data = await run(['pypi', 'search', 'requests', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('stackoverflow search returns results', async () => {
+  const data = await run(['stackoverflow', 'search', 'react hooks', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('devto search returns results', async () => {
+  const data = await run(['devto', 'search', 'typescript', '--limit', '2']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('weather current returns results', async () => {
+  const data = await run(['weather', 'current', 'london']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+await test('read URL returns results (valid)', async () => {
+  const data = await run(['read', 'https://example.com']);
+  assertShape(data, ['source', 'command', 'results']);
+});
+
+// ── Contract Suite Hooks ──────────────────────────────────────────────────────
+console.log('\nRunning formal contract regression suite (test/contracts/*.test.js):');
+
+const contractsDir = join(__dirname, 'contracts');
+if (fs.existsSync(contractsDir)) {
+  const files = fs.readdirSync(contractsDir).filter(f => f.endsWith('.test.js'));
+  for (const f of files) {
+    await test(`Contract suite: ${f}`, async () => {
+      const result = await execa('node', ['--test', join(contractsDir, f)], { reject: false });
+      if (result.exitCode !== 0) throw new Error(`Contract failed: ${f}\n${result.stderr || result.stdout}`);
+    });
+  }
+}
 
 // ── Summary ───────────────────────────────────────────────────────────────────
 
