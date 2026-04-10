@@ -82,189 +82,116 @@ program
     await runAuth(platform, opts);
   });
 
-// ── list ──────────────────────────────────────────────────────────────────────
-program
-  .command('list')
-  .description('List all available commands (machine-readable for agents)')
-  .action(() => {
-    output({
-      source: 'webcli',
-      version: pkg.version,
-      total_platforms: 18,
-      platforms: {
-        // ── Social / Community ───────────────────────────────────────────────
-        hackernews: {
-          auth: 'none',
-          commands: [
-            'top [--limit n]',
-            'new [--limit n]',
-            'best [--limit n]',
-            'ask [--limit n]',
-            'show [--limit n]',
-            'search <query> [--sort relevance|date] [--type story|comment]',
-            'item <id> [--comments n]',
-            'user <username>',
-          ],
-        },
-        reddit: {
-          auth: 'optional (OAuth for user endpoints)',
-          commands: [
-            'hot [--subreddit name] [--limit n]',
-            'top [--subreddit name] [--time hour|day|week|month|year|all]',
-            'new [--subreddit name] [--limit n]',
-            'search <query> [--subreddit name] [--sort relevance|top|new]',
-            'thread <url> [--comments n]',
-            'user <username>',
-            'info <subreddit>',
-          ],
-        },
-        twitter: {
-          auth: 'required (cookie-based)',
-          commands: [
-            'search <query> [--limit n] [--lang en]',
-            'timeline [--type for-you|following] [--limit n]',
-            'user <handle> [--limit n]',
-            'bookmarks [--limit n]',
-            'thread <url>',
-          ],
-        },
-        linkedin: {
-          auth: 'required (cookie-based)',
-          commands: [
-            'search-jobs <query> [--location city] [--remote] [--limit n]',
-            'search-people <query> [--company name] [--limit n]',
-            'company <name|url>',
-          ],
-        },
-        devto: {
-          auth: 'none',
-          commands: [
-            'feed [--tag name] [--top days] [--limit n]',
-            'search <query> [--limit n]',
-            'article <id|slug>',
-            'user <username> [--limit n]',
-            'tags [--limit n]',
-          ],
-        },
-
-        // ── Finance / Markets ────────────────────────────────────────────────
-        finance: {
-          auth: 'none',
-          commands: [
-            'quote <symbol> [--asset-type equity|crypto] — Get structured quotes and market data',
-          ],
-        },
-
-        // ── Developer Tools ──────────────────────────────────────────────────
-        docker: {
-          auth: 'none (public endpoints)',
-          commands: [
-            'image <name>       — Get structured metadata for a Docker image repo',
-            'tags <name>        — List available published tags for a Docker image',
-          ]
-        },
-        huggingface: {
-          auth: 'none (public endpoints)',
-          commands: [
-            'model <repo-id>    — Get HuggingFace model metadata',
-            'dataset <repo-id>  — Get HuggingFace dataset metadata',
-          ]
-        },
-        github: {
-          auth: 'required (gh CLI + token)',
-          commands: [
-            'search-repos <query> [--language lang] [--sort stars|forks|updated]',
-            'search-issues <query> [--repo owner/repo] [--state open|closed]',
-            'issues <owner/repo> [--state open|closed] [--label label]',
-            'get-readme <owner/repo>',
-            'get-file <owner/repo> <path> [--ref branch]',
-            'list-repos [--user username] [--limit n]',
-            'trending [--language lang] [--since daily|weekly|monthly]',
-          ],
-        },
-        npm: {
-          auth: 'none',
-          commands: [
-            'search <query> [--limit n]',
-            'info <package> [--version v]',
-            'versions <package> [--limit n]',
-            'downloads <package> [--period last-day|last-week|last-month|last-year]',
-            'deps <package> [--version v]',
-          ],
-        },
-        pypi: {
-          auth: 'none',
-          commands: [
-            'info <package> [--version v]',
-            'search <query> [--limit n]',
-            'versions <package> [--limit n]',
-          ],
-        },
-        stackoverflow: {
-          auth: 'none',
-          commands: [
-            'search <query> [--sort relevance|votes|activity] [--tag tag] [--limit n]',
-            'question <id>',
-            'similar <query> [--limit n]',
-            'tags <tag>',
-          ],
-        },
-
-        // ── Research / Knowledge ─────────────────────────────────────────────
-        arxiv: {
-          auth: 'none',
-          commands: [
-            'search <query> [--category cs.AI|cs.LG|cs.CV|...] [--sort relevance|submittedDate]',
-            'recent [--category cs.AI] [--limit n]',
-            'get <id|url>',
-            'author <name> [--limit n]',
-          ],
-        },
-        wikipedia: {
-          auth: 'none',
-          commands: [
-            'search <query> [--limit n]',
-            'summary <title>',
-            'full <title> [--sections]',
-            'related <title> [--limit n]',
-          ],
-        },
-
-        // ── Web / Content / Search ───────────────────────────────────────────
-        search: {
-          auth: 'none (ddg) | optional API Key (brave|tavily)',
-          commands: [
-            'search <query> [--engine ddg|brave|tavily] [--limit n] [--delay ms]',
-          ]
-        },
-        read: {
-          auth: 'none',
-          commands: [
-            'read <url>        — fetch any webpage as clean markdown text',
-            'read <url> --raw  — fetch raw HTML',
-          ],
-        },
-        youtube: {
-          auth: 'optional (cookies for private videos)',
-          commands: [
-            'search <query> [--limit n]',
-            'transcript <url> [--lang en]',
-            'metadata <url>',
-            'channel <url> [--limit n]',
-          ],
-        },
-
-        // ── Utilities ────────────────────────────────────────────────────────
-        weather: {
-          auth: 'none',
-          commands: [
-            'current <city>',
-            'forecast <city> [--days n]',
-          ],
-        },
+// ── Machine-readable help (--json) ────────────────────────────────────────────
+// Intercept before commander to cleanly format agent metadata boundaries.
+if (process.argv.includes('help') && process.argv.includes('--json') || process.argv.includes('--help-json')) {
+  output({
+    name: 'webcli',
+    version: pkg.version,
+    commands: [
+      {
+        name: "search",
+        description: "Universal Web Search via multiple engines",
+        arguments: [{ name: "query", required: true, variadic: false }],
+        options: [
+          { name: "--engine", default: "ddg", env_vars: ["BRAVE_API_KEY", "TAVILY_API_KEY"] },
+          { name: "--limit", default: 10 },
+          { name: "--delay", default: 1500 },
+          { name: "--read-top", default: null }
+        ],
+        auth_required: false,
+        env_vars: ["BRAVE_API_KEY", "TAVILY_API_KEY"],
+        batch: false,
+        composed: true,
+        experimental: false
       },
-    });
+      {
+        name: "finance quote",
+        description: "Get structured quotes and market data",
+        arguments: [{ name: "symbols", required: true, variadic: true }],
+        options: [
+          { name: "--asset-type", required: true, default: null }
+        ],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "hf model",
+        description: "Get HuggingFace model metadata",
+        arguments: [{ name: "models", required: true, variadic: true }],
+        options: [],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "hf dataset",
+        description: "Get HuggingFace dataset metadata",
+        arguments: [{ name: "datasets", required: true, variadic: true }],
+        options: [],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "docker image",
+        description: "Get structured metadata for a Docker image repo",
+        arguments: [{ name: "images", required: true, variadic: true }],
+        options: [],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "docker tags",
+        description: "List available published tags for a Docker image",
+        arguments: [{ name: "images", required: true, variadic: true }],
+        options: [
+          { name: "--limit", default: 20 }
+        ],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "read",
+        description: "Fetch any webpage as clean markdown text",
+        arguments: [{ name: "urls", required: true, variadic: true }],
+        options: [
+          { name: "--raw", default: false }
+        ],
+        auth_required: false,
+        env_vars: [],
+        batch: true,
+        composed: false,
+        experimental: false
+      },
+      {
+        name: "doctor",
+        description: "Check all dependencies and auth status",
+        arguments: [],
+        options: [],
+        auth_required: false,
+        env_vars: [],
+        batch: false,
+        composed: false,
+        experimental: false
+      }
+    ]
   });
+  process.exit(0);
+}
 
 // ── Global error handling ─────────────────────────────────────────────────────
 program.exitOverride();

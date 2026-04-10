@@ -1,302 +1,201 @@
-# webcli — Unified Web CLI for AI Agents
+# webcli
 
-> Read the web from your shell. Designed for Claude Code, OpenClaw, Codex, and any agent that can run shell commands.
+webcli is a parse-safe, provider-agnostic CLI designed for autonomous agents.
 
-**14 platforms. Zero browser needed. All output is structured JSON.**
+It gives AI agents structured JSON access to 18 web platforms — including documentation reading, web search, GitHub repos, finance quotes, HuggingFace models, and Docker registries — without requiring browsers, scrapers, or complex API keys.
 
-## Install
+## Agent Integration Guarantees
+
+- stdout is **always** valid JSON, never mixed with logs
+- stderr is diagnostic only and safe to discard
+- batch commands preserve input order exactly
+- partial failures are item-local — one bad URL or symbol never fails the batch
+- `count` always equals the number of returned items
+- composed commands (`--read-top`) colocate nested results on each item
+- exit code 0 on structured errors, 1 on command execution failure
+
+## Installation
 
 ```bash
 npm install -g browseless
-# or run directly
-npx -p browseless webcli hackernews top
 ```
+*(Development/Local install)*: `npm install -g .`
 
 ## Quick Start
 
+Check dependencies and platform availability:
 ```bash
-# Check all deps
 webcli doctor
+```
 
-# Start immediately (no auth needed)
-webcli hackernews top --limit 5
-webcli reddit hot --subreddit programming
-webcli wikipedia summary "Kalman filter"
-webcli arxiv search "LLM agents" --category cs.AI
-webcli npm info express
-webcli weather current "New Delhi"
+Read any webpage as clean markdown:
+```bash
 webcli read https://example.com
-
-# After installing gh CLI
-webcli github search-repos "esp32 freertos" --language C
-
-# After installing yt-dlp
-webcli youtube transcript https://youtube.com/watch?v=...
 ```
 
----
-
-## All 14 Platforms
-
-### 🔓 No Auth Required
-
-| Platform | Key Commands |
-|---|---|
-| **hackernews** | `top`, `new`, `best`, `ask`, `show`, `search`, `item`, `user` |
-| **reddit** | `hot`, `top`, `new`, `search`, `thread`, `user`, `info` |
-| **wikipedia** | `search`, `summary`, `full`, `related` |
-| **arxiv** | `search`, `recent`, `get`, `author` |
-| **npm** | `search`, `info`, `versions`, `downloads`, `deps` |
-| **pypi** | `info`, `search`, `versions` |
-| **stackoverflow** | `search`, `question`, `similar`, `tags` |
-| **devto** | `feed`, `search`, `article`, `user`, `tags` |
-| **weather** | `current`, `forecast` |
-| **read** | `<url>` — fetch any webpage as clean text |
-
-### 🔑 Auth Required
-
-| Platform | Auth Method | Setup |
-|---|---|---|
-| **github** | `gh` CLI + token | `webcli auth github` |
-| **youtube** | Optional cookies | `webcli auth youtube` (or skip) |
-| **twitter** | Cookie export | `webcli auth twitter` |
-| **linkedin** | Cookie export | `webcli auth linkedin` |
-
----
-
-## Command Reference
-
-### hackernews (`webcli hn`)
+Universal web search:
 ```bash
-webcli hackernews top [--limit n]
-webcli hackernews new [--limit n]
-webcli hackernews best [--limit n]
-webcli hackernews ask [--limit n]
-webcli hackernews show [--limit n]
-webcli hackernews search <query> [--sort relevance|date] [--type story|comment]
-webcli hackernews item <id> [--comments n]
-webcli hackernews user <username>
+webcli search "react memory leaks"
 ```
 
-### reddit
-```bash
-webcli reddit hot [--subreddit name] [--limit n]
-webcli reddit top [--subreddit name] [--time hour|day|week|month|year|all]
-webcli reddit new [--subreddit name] [--limit n]
-webcli reddit search <query> [--subreddit name] [--sort relevance|top|new]
-webcli reddit thread <url> [--comments n]
-webcli reddit user <username>
-webcli reddit info <subreddit>
-```
+## Core Commands
 
-### github (`webcli gh`)
-```bash
-webcli github search-repos <query> [--language lang] [--sort stars|forks|updated] [--limit n]
-webcli github search-issues <query> [--repo owner/repo] [--state open|closed] [--type issue|pr]
-webcli github issues <owner/repo> [--state open|closed] [--label label] [--limit n]
-webcli github get-readme <owner/repo>
-webcli github get-file <owner/repo> <path> [--ref branch]
-webcli github list-repos [--user username] [--limit n]
-webcli github trending [--language lang] [--since daily|weekly|monthly]
-```
-
-### youtube (`webcli yt`)
-```bash
-webcli youtube search <query> [--limit n]
-webcli youtube transcript <url> [--lang en]     ← full transcript as text
-webcli youtube metadata <url>
-webcli youtube channel <url> [--limit n]
-```
-
-### twitter (`webcli tw`)
-```bash
-webcli twitter search <query> [--limit n] [--lang en]
-webcli twitter timeline [--type for-you|following] [--limit n]  ← auth required
-webcli twitter user <handle> [--limit n]
-webcli twitter bookmarks [--limit n]                             ← auth required
-webcli twitter thread <url>
-```
-
-### linkedin (`webcli li`)
-```bash
-webcli linkedin search-jobs <query> [--location city] [--remote] [--limit n]
-webcli linkedin search-people <query> [--company name] [--limit n]
-webcli linkedin company <name|url>
-```
-
-### arxiv
-```bash
-webcli arxiv search <query> [--category cs.AI|cs.LG|cs.CV|physics] [--limit n]
-webcli arxiv recent [--category cs.AI] [--limit n]
-webcli arxiv get <id|url>
-webcli arxiv author "<name>" [--limit n]
-```
-
-### npm
-```bash
-webcli npm search <query> [--limit n]
-webcli npm info <package> [--version v]
-webcli npm versions <package> [--limit n]
-webcli npm downloads <package> [--period last-day|last-week|last-month|last-year]
-webcli npm deps <package>
-```
-
-### pypi
-```bash
-webcli pypi info <package> [--version v]
-webcli pypi search <query> [--limit n]
-webcli pypi versions <package> [--limit n]
-```
-
-### stackoverflow (`webcli so`)
-```bash
-webcli stackoverflow search <query> [--sort relevance|votes] [--tag tag] [--limit n]
-webcli stackoverflow question <id>
-webcli stackoverflow similar <query> [--limit n]
-webcli stackoverflow tags <tag>
-```
-
-### wikipedia (`webcli wiki`)
-```bash
-webcli wikipedia search <query> [--limit n]
-webcli wikipedia summary <title>
-webcli wikipedia full <title> [--sections]
-webcli wikipedia related <title> [--limit n]
-```
-
-### devto (`webcli dev`)
-```bash
-webcli devto feed [--tag name] [--top 7|30|365] [--limit n]
-webcli devto search <query> [--limit n]
-webcli devto article <id|slug>
-webcli devto user <username>
-webcli devto tags [--limit n]
-```
-
-### weather
-```bash
-webcli weather current <city>
-webcli weather forecast <city> [--days 1-16]
-```
-
-### read
-```bash
-webcli read <url>           ← fetch any URL as clean markdown (best for agents)
-webcli read <url> --raw     ← raw HTML
-```
-
----
-
-## Auth Setup
-
-### GitHub
-```bash
-# Install gh CLI first
-winget install GitHub.cli   # Windows
-brew install gh             # macOS
-
-# Then authenticate
-gh auth login
-# or provide token directly
-webcli auth github --token ghp_xxxx
-```
-
-### Twitter/X (Cookie-based)
-```bash
-# 1. Log into twitter.com in Chrome
-# 2. Install Cookie-Editor extension
-# 3. Click "Export" → JSON
-# 4. Run:
-webcli auth twitter
-# Paste the JSON when prompted
-```
-
-### LinkedIn (Cookie-based)
-```bash
-# 1. Log into linkedin.com
-# 2. Export cookies via Cookie-Editor
-# 3. Run:
-webcli auth linkedin
-```
-
-### YouTube (Optional)
-```bash
-# Only needed for private videos or higher rate limits
-webcli auth youtube
-# Press Enter to skip if not needed
-```
-
----
-
-## Output Format
-
-All commands output structured JSON to **stdout**. Errors go to **stderr**.
+### `search`
+Search the web across multiple providers (DuckDuckGo, Brave, Tavily) with built-in pacing.
 
 ```json
+$ webcli search "react memory leaks" --limit 3 --read-top 1
 {
-  "source": "hackernews",
-  "command": "top",
-  "count": 5,
-  "results": [...],
-  "fetched_at": "2026-04-09T12:00:00.000Z"
+  "source": "search",
+  "command": "search",
+  "count": 3,
+  "ok": true,
+  "mode": "search+read",
+  "engine": "ddg",
+  "query": "react memory leaks",
+  "results": [
+    {
+      "title": "How to Fix Memory Leaks in React Applications",
+      "url": "https://www.freecodecamp.org/news/fix-memory-leaks-in-react-apps/",
+      "snippet": "",
+      "source": "duckduckgo",
+      "rank": 1,
+      "read": {
+        "ok": true,
+        "url": "https://www.freecodecamp.org/news/fix-memory-leaks-in-react-apps/",
+        "content": "Title: How to Fix Memory Leaks in React Applications...",
+        "provider": "jina",
+        "error": null
+      }
+    }
+  ],
+  "fetched_at": "2026-04-10T18:29:15.721Z"
 }
 ```
 
-**Agents parse stdout. Humans read stderr. They never mix.**
+### `finance`
+Get live or delayed price quotes and market caps.
 
-Exit codes: `0` = success, `1` = error.
+```json
+$ webcli finance quote BTC ETH --asset-type crypto
+{
+  "source": "finance",
+  "command": "quote_batch",
+  "count": 2,
+  "ok": true,
+  "asset_type": "crypto",
+  "results": [
+    {
+      "ok": true,
+      "type": "quote",
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "asset_type": "crypto",
+      "source": "coingecko",
+      "price": {
+        "value": 72947,
+        "currency": "USD",
+        "change": 1039,
+        "change_percent": 1.4452
+      },
+      "fundamentals": {
+        "market_cap": 1459933521086
+      },
+      "market": {
+        "delayed": false,
+        "as_of": "2026-04-10T18:28:58.053Z"
+      }
+    }
+  ],
+  "fetched_at": "2026-04-10T18:29:18.154Z"
+}
+```
+*(Also available: AAPL MSFT --asset-type equity)*
 
----
+### `huggingface` (hf)
+Discover capabilities and metadata for ML models and datasets.
 
-## Agent Integration
+```json
+$ webcli hf model sentence-transformers/all-MiniLM-L6-v2
+{
+  "source": "huggingface",
+  "command": "model",
+  "ok": true,
+  "results": {
+    "type": "model",
+    "id": "sentence-transformers/all-MiniLM-L6-v2",
+    "source": "huggingface",
+    "card": {
+      "author": "sentence-transformers",
+      "pipeline_tag": "sentence-similarity",
+      "downloads": 194504137,
+      "tags": ["sentence-transformers", "pytorch", "bert"]
+    },
+    "readme_excerpt": "# all-MiniLM-L6-v2 This is a sentence-transformers model..."
+  }
+}
+```
 
-### OpenClaw / Claude Code
-Drop `AGENTS.md` in your workspace root. Agents auto-discover all commands via `webcli list`.
+### `docker`
+Identify metadata and available tags for Docker Hub containers.
 
-### Any shell-capable agent
+```json
+$ webcli docker tags nginx --limit 3
+{
+  "source": "docker",
+  "command": "tags",
+  "ok": true,
+  "results": {
+    "type": "tags",
+    "image": "nginx",
+    "source": "dockerhub",
+    "count": 3,
+    "tags": [
+      {
+        "name": "mainline-alpine3.23",
+        "size": 25988064,
+        "architectures": ["amd64", "arm", "arm64"]
+      }
+    ]
+  }
+}
+```
+
+### `doctor`
+View current CLI installation bounds dynamically and verify which systems have auth correctly mapped.
+
 ```bash
-# Agent runs this, parses JSON output
-webcli hackernews top --limit 10
-webcli arxiv search "transformer attention mechanisms" --category cs.AI
-webcli read https://some-article.com
-webcli youtube transcript https://youtube.com/watch?v=xxx
+webcli doctor
 ```
 
-### Claude Code example prompts
+## Composition & Batch
+
+Webcli exposes deep composition pipelines. You can pass arrays of images directly inside a single command to exploit built-in concurrency tracking:
+```bash
+webcli docker image nginx python redis
+webcli finance quote AAPL MSFT NVDA --asset-type equity
 ```
-"Search GitHub for ESP32 FreeRTOS examples in C using webcli"
-"Get the transcript of this YouTube video and summarize it"
-"Find the top Stack Overflow answers for this error message"
-"What's the weather in Phagwara today?"
-"Search ArXiv for recent papers on LLM memory"
+
+Or you can compose entirely decoupled pipelines like search-to-read seamlessly:
+```bash
+webcli search "react memory leaks" --read-top 3
 ```
 
----
+## Environment Variables
 
-## Dependencies
+| Variable | Description |
+|---|---|
+| `BRAVE_API_KEY` | Overrides generic searches leveraging Brave Search APIs securely |
+| `TAVILY_API_KEY` | Switches core capabilities to Tavily dynamic results securely |
+| `--delay <ms>` | Modifies underlying DDG delay (default 1500) preventing 429 backoff faults |
 
-| Tool | Required for | Install |
-|---|---|---|
-| `gh` | GitHub commands | `winget install GitHub.cli` |
-| `yt-dlp` | YouTube transcript/metadata | `pip install yt-dlp` |
-| `twitter-cli` | Twitter commands | `npm i -g twitter-cli` |
-| Node 18+ | Everything | https://nodejs.org |
+## Operational Notes
 
-Everything else uses direct HTTP APIs — no additional installs.
+- **Caching**: `read` pipelines enforce generic ETags dynamically.
+- **Finance Limits**: Yahoo Equity results may carry a 15-minute delay during live hours.
+- **Bounded Concurrency**: All `batch` lists are internally bottlenecked via `p-limit(5)`. Submitting large arrays is safe and will not crash the socket pipeline.
+- **Failures**: If one URL inside `read` batch fails (404), the item marks `ok: false` explicitly while leaving the batch envelope `ok: true`.
 
-Run `webcli doctor` to check all deps at once.
+## Contracts
 
----
-
-## Add a New Platform
-
-1. Create `platforms/yourplatform.js` — export `yourplatformCommand()`
-2. Add import + `program.addCommand(yourplatformCommand())` in `bin/webcli.js`
-3. Add entry to `webcli list` and `AGENTS.md`
-
-That's it. Every platform is just a Commander subcommand + fetch calls.
-
----
-
-## License
-MIT © Atharva Singh
+View all hard schemas, bounded conditions, and strict parsing mappings comprehensively at [docs/contracts.md](docs/contracts.md).

@@ -1,34 +1,41 @@
 # Changelog
 
-## [1.1.0] - 2026-04-09
+## Phase 1
+- Provider abstraction
+- Concurrency control
+- Cache layer
+- Initial core platforms (GitHub, Reddit, Wikipedia, HackerNews, StackOverflow, etc)
 
-### Added
-- **arxiv** — search papers, recent by category, fetch by ID, search by author
-- **npm** — search, info, versions, download stats, dependency list
-- **pypi** — info, search, versions
-- **stackoverflow** — search, question + answers, similar, tag info
-- **wikipedia** — search, summary, full article text, related articles
-- **devto** — feed, search, article, user, trending tags
-- **weather** — current conditions + 16-day forecast via open-meteo (no API key)
-- **read** — fetch any URL as clean markdown text via Jina Reader with direct fetch fallback
-- Updated `AGENTS.md` with all 14 platforms, example workflows, best commands for agents
-- Updated `README.md` with full command reference and auth guide
+## Phase 2A
+- Web Search capability (DuckDuckGo integration + Provider architecture boundaries)
 
-### Fixed
-- GitHub `search-repos`: removed `topics` field (not supported by `gh` CLI JSON output)
-- YouTube: `resolveYtDlp()` now handles Windows user-install PATH issue (AppData/Roaming/Python)
-- Reddit: browser-like User-Agent headers to avoid 403s on restrictive networks
+## Phase 2B
+- Finance market operations (Yahoo Finance for Equities, CoinGecko for Crypto)
+- Strict symbol disambiguation enforcement
 
-## [1.0.0] - 2026-04-09
+## Phase 2C
+- HuggingFace Registry platform
+- Automated metadata parsing mapped for models and datasets
+- Integrated dynamic `readme_excerpt` injection 
 
-### Added
-- **github** — search repos, issues, get README/file, list repos, trending
-- **reddit** — hot, top, new, search, thread, user, subreddit info
-- **twitter** — search, timeline, user, bookmarks, thread
-- **youtube** — search, transcript, metadata, channel
-- **hackernews** — top, new, best, ask, show, search, item, user
-- **linkedin** — search-jobs, search-people, company
-- `webcli doctor` — dep + auth health check
-- `webcli auth` — interactive auth for all platforms
-- `webcli list` — machine-readable command discovery
-- Core: structured JSON stdout, stderr error separation, auth store, exec utilities
+## Phase 2D
+- Docker Hub Registry platform
+- Namespaced architecture unrolling (`library/` fallbacks)
+- Image and Tag discovery metrics
+
+## Phase 3A
+- Search Composition pipeline (`search --read-top`)
+
+## Phase 3B
+- Batch Array concurrent processing via `p-limit(5)` bottleneck
+- Multi-input limits implemented across Finance, HuggingFace, and Docker integrations
+
+## Phase 3C
+- Dedicated Contract schema generation (`docs/contracts.md`)
+- Isolated test engine suite via `node:test` regression mapping
+- Fixed JSON array drift mapping limits seamlessly on multi-element bounding scopes
+
+## Phase 3D
+- Complete CLI human interface documentation overrides 
+- Advanced Agent Integration Guarantees formulated natively alongside `CHANGELOG.md`
+- Self-introspecting JSON output (`help --json` standard format mappings)
