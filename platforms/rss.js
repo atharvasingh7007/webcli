@@ -37,7 +37,7 @@ export function rssCommand() {
 
           return { url, ok: true, count: items.length, items };
         } catch (err) {
-          return { url, ok: false, error: { code: 'HTTP_ERROR', message: err.message } };
+          return { url, ok: false, error: { code: err.code || 'HTTP_ERROR', message: err.message } };
         }
       })));
 

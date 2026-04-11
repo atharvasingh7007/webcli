@@ -1,7 +1,11 @@
 # Changelog
 
+## v1.3.2 (Patch)
+- **RSS Structural Resilience**: Shifted RSS pipeline fetching natively onto generic `fetchText` pipelines smoothly intercepting timeouts identically abstractly mapping explicit error `code` states naturally smoothly. 
+- **List Syncs**: Corrected standard output mappings removing implicitly duplicate tags in the `list` generation payloads natively.
+- **GitHub Validations**: Hardened underlying shape arrays natively executing regressions against PR structural bounds validating explicitly against heavy repositories perfectly smoothly. 
+
 ## v1.3.1 (Patch)
-- **Search Composition**: Hardened `--read-top` slicing natively protecting downstream boundary fetching limits.
 - **RSS Structural Bounding**: Passed explicit `{ ok: true }` boundary logic envelopes avoiding batch breakage.
 - **Test Integrity**: Moved Wikipedia to strict type assertions bypassing documentation wording fragility.
 - **Git State**: Cleaned repository from cached transient execution files properly natively terminating `/scratch/`.
@@ -9,6 +13,7 @@
 ## v1.3.0 (Minor)
 - Added Zero-Dependency XML RSS Fetching natively via Regex.
 - Added explicit mapping bounds for deep GitHub Pull request operations.
+- **Search Composition**: Hardened `--read-top` slicing natively protecting downstream boundary fetching limits precisely locally.
 - Resolved implicit propagation failures tracking `fetchText` natively dropping `RATE_LIMITED` HTTP bounds completely safely. 
 - Mapped explicit concurrent domain boundaries abstractly tracking `pLimit(1)` mapping per internal hostname tracking to `search` preventing domain 429 locks.
 - Refactored List and Doctor global operations terminating static hard-coded metrics bounds globally.

@@ -5,12 +5,20 @@ import { execa } from 'execa';
 test('GitHub Contracts', async (t) => {
   await t.test('pr list maps explicitly across public targets evaluating standard array wraps gracefully', async () => {
     try {
-      const { stdout } = await execa('node', ['bin/webcli.js', 'github', 'pr', 'list', '--repo', 'atharvasingh7007/webcli']);
+      const { stdout } = await execa('node', ['bin/webcli.js', 'github', 'pr', 'list', '--repo', 'facebook/react']);
       const res = JSON.parse(stdout);
       
       assert.strictEqual(res.source, 'github');
       assert.strictEqual(res.command, 'pr-list');
       assert.ok(Array.isArray(res.results), 'Results must strictly natively encapsulate as an Array iteratively');
+      
+      // Ensure we explicitly map real array payloads validating implicit constraints gracefully.
+      if (res.results.length > 0) {
+        assert.ok(res.results[0].number !== undefined, 'Must structurally map numeric Pull Request identifiers.');
+        assert.strictEqual(typeof res.results[0].title, 'string', 'Title dynamically evaluates into cleanly mapped formats');
+      } else {
+        assert.ok(true, 'Test safely bypassed empty Pull Request array boundary structurally.');
+      }
     } catch (err) {
       if (err.stdout) {
          try {
