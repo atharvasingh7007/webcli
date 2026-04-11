@@ -274,7 +274,7 @@ This document serves as the ground truth for validating webcli outputs explicitl
      "count": 2,
      "results": [ 
         { "url": "...", "ok": true, "count": 10, "items": [ { "title": "...", "link": "...", "description": "...", "pubDate": "..." } ] },
-        { "url": "...", "ok": false, "error": "HTTP 404" }
+        { "url": "...", "ok": false, "error": { "code": "HTTP_ERROR", "message": "HTTP 404" } }
      ]
   }
   ```
@@ -282,3 +282,4 @@ This document serves as the ground truth for validating webcli outputs explicitl
 ### Semantic Rules
 - `count` equals the number of RSS feeds requested.
 - Object properties `title`, `link`, `description`, `pubDate` are strictly mapped internally cleanly escaping undefined fields gracefully.
+- Failed items carry `ok: false` explicitly populated with standard `{ code, message }` error schemas safely.

@@ -1,8 +1,16 @@
-# v1.2.0 — Agent Capability Layer, Composition, Batch, and Contract Hardening
+# v1.3.1 — Production Stabilization and Boundary Hardening
 
-This is a major capability expansion for `webcli`, transforming it from a raw CLI tool into an enterprise-grade execution tier explicitly designed for autonomous agents.
+This release marks the transition of `webcli` into a stable, production-grade tool. We have completed a comprehensive audit ensuring that all platforms return strictly bounded JSON contracts, resolving drift across 19 supported platforms.
 
 ## Key Upgrades
+- **Search Composition Restored**: Fixed `--read-top` domain limits properly truncating arrays natively. 
+- **Fetch Resiliency**: `fetchText` securely routes explicit `RATE_LIMITED` codes preventing silent 429 TCP delays.
+- **Zero-Dependency RSS Platform**: Native ingestion pipeline tracking global `XML` feeds efficiently.
+- **GitHub PR Support**: Native metadata capabilities mapped handling open metrics seamlessly.
+- **Contract Schema Integrity**: Enforced invariant regression structures verifying constraints natively match `docs/contracts.md`. 
+- **Runtime Optimization**: Implemented dynamically abstracted `webcli cache clear` capabilities manually escaping static limits natively.
+
+# v1.2.0 — Agent Capability Layer, Composition, Batch, and Contract Hardening
 
 ### Agent Integration Guarantees & Contract Hardening
 We've established rigorous output constraints protecting agent integrations from structural drift:

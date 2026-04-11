@@ -25,7 +25,6 @@ npm-debug.log*
 .vscode/
 .idea/
 *.swp
-*.swp
 *.swo
 
 # Project internal outputs
