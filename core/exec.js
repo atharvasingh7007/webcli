@@ -158,12 +158,13 @@ export async function fetchText(url, opts = {}) {
   while (retries >= 0) {
     let res;
     try {
+      const { headers, ...restOpts } = opts;
       res = await fetch(url, {
         headers: {
           'User-Agent': 'webcli/1.0.0 (AI agent web CLI; github.com/atharvasingh7007/webcli)',
-          ...opts.headers,
+          ...headers,
         },
-        ...opts,
+        ...restOpts,
       });
     } catch (networkErr) {
       if (retries === 0) {

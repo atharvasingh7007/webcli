@@ -17,7 +17,7 @@ test('GitHub Contracts', async (t) => {
         assert.ok(res.results[0].number !== undefined, 'Must structurally map numeric Pull Request identifiers.');
         assert.strictEqual(typeof res.results[0].title, 'string', 'Title dynamically evaluates into cleanly mapped formats');
       } else {
-        assert.ok(true, 'Test safely bypassed empty Pull Request array boundary structurally.');
+        assert.fail('facebook/react returned 0 open PRs natively. This definitively implies an API payload boundary failure bypassing object testing gracefully.');
       }
     } catch (err) {
       if (err.stdout) {

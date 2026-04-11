@@ -1,4 +1,4 @@
-# v1.3.2 — Pipeline Fetch Upgrades and Schema Stabilization
+# v1.3.3 — Pipeline Fetch Upgrades and Schema Stabilization
 
 This release marks the transition of `webcli` into a stable, production-grade tool. We have completed a comprehensive audit ensuring that all platforms return strictly bounded JSON contracts, resolving drift across 19 supported platforms.
 

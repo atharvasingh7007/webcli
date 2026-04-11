@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.3.3 (Patch)
+- **Fetch Core Reliability**: Fixed a subtle double-spread override bug dropping baseline `User-Agent` identifiers safely preventing strict-bot 403 API blockages.
+- **GitHub Validations**: Transformed vacuous array escapes into strict explicit failures ensuring tracking regression structurally enforces array bounds.
+
 ## v1.3.2 (Patch)
 - **RSS Structural Resilience**: Shifted RSS pipeline fetching natively onto generic `fetchText` pipelines smoothly intercepting timeouts identically abstractly mapping explicit error `code` states naturally smoothly. 
 - **List Syncs**: Corrected standard output mappings removing implicitly duplicate tags in the `list` generation payloads natively.
