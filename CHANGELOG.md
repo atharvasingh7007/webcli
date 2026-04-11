@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.3.1 (Patch)
+- **Search Composition**: Hardened `--read-top` slicing natively protecting downstream boundary fetching limits.
+- **RSS Structural Bounding**: Passed explicit `{ ok: true }` boundary logic envelopes avoiding batch breakage.
+- **Test Integrity**: Moved Wikipedia to strict type assertions bypassing documentation wording fragility.
+- **Git State**: Cleaned repository from cached transient execution files properly natively terminating `/scratch/`.
+
 ## v1.3.0 (Minor)
 - Added Zero-Dependency XML RSS Fetching natively via Regex.
 - Added explicit mapping bounds for deep GitHub Pull request operations.

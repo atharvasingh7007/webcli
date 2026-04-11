@@ -194,6 +194,7 @@ webcli search "react memory leaks" --read-top 3
 - **Caching**: `read` pipelines enforce generic ETags dynamically.
 - **Finance Limits**: Yahoo Equity results may carry a 15-minute delay during live hours.
 - **Bounded Concurrency**: All `batch` lists are internally bottlenecked via `p-limit(5)`. Submitting large arrays is safe and will not crash the socket pipeline.
+- **`fetchText` Parallel Stalls**: Internal fetch layers backoff up to 3 times per domain. With exponential multipliers, a dead URL could hold a parallel slot for up to ~7 seconds, creating minor pipeline stalling for agents executing massive batch arrays.
 - **Failures**: If one URL inside `read` batch fails (404), the item marks `ok: false` explicitly while leaving the batch envelope `ok: true`.
 
 ## Contracts

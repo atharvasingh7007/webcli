@@ -4,6 +4,7 @@
  */
 import { Command } from 'commander';
 import { output, withErrorHandling, envelope } from '../core/output.js';
+import { fetchText } from '../core/exec.js';
 import pLimit from 'p-limit';
 
 export function rssCommand() {
@@ -12,14 +13,11 @@ export function rssCommand() {
   cmd
     .argument('<urls...>', 'URLs of RSS feeds')
     .action(withErrorHandling('rss', async (urls) => {
-      const { default: fetch } = await import('node-fetch');
       const limit = pLimit(5);
       
       const results = await Promise.all(urls.map(url => limit(async () => {
         try {
-          const res = await fetch(url, { headers: { 'User-Agent': 'webcli-rss/1.0' } });
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const xml = await res.text();
+          const xml = await fetchText(url, { headers: { 'User-Agent': 'webcli-rss/1.0' } });
           
           // Natively decouple blocks securely avoiding dependency injections
           const itemsRaw = xml.split(/<item>|<entry>/i).slice(1);

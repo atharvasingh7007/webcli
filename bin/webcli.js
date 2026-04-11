@@ -269,7 +269,7 @@ program
         rss: {
           auth: 'none',
           commands: [
-            'rss <url> -- Fetch standard XML feeds cleanly mapped',
+            '<url> -- Fetch standard XML feeds cleanly mapped',
           ]
         }
     };
